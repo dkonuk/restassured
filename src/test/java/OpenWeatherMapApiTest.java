@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.*;
 
 public class OpenWeatherMapApiTest {
 
-    private static final String API_KEY = "5027f56e52e100a6ae96c02835b18d4a";
+    private static final String API_KEY = "";
     private static final String CITY = "Ankara";
 
     @BeforeClass
