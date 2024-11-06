@@ -3,7 +3,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
 import org.testng.annotations.BeforeClass;
-import com.google.gson.Gson;
+
 
 
 import static io.restassured.RestAssured.*;
