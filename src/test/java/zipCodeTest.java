@@ -1,30 +1,44 @@
 import io.restassured.http.ContentType;
-import lombok.extern.slf4j.Slf4j;
+import io.restassured.specification.RequestSpecification;
+import io.restassured.builder.RequestSpecBuilder;
+
+
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.*;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.testng.internal.Utils.log;
+
 
 public class zipCodeTest {
+
+    private static RequestSpecification requestSpec;
+
+    @BeforeClass
+    public static void createRequestSpecification(){
+        requestSpec = new RequestSpecBuilder().
+                setBaseUri("https://zippopotam.us").
+                build();
+    }
 
     @DataProvider(name = "zipCodeandPlaces")
     public static Object[][] zipCodeandPlaces(){
         return new Object[][]{
                 {"us", "90210", "Beverly Hills"},
                 {"us", "12345", "Schenectady"},
-                {"ca", "B2R", "Waverley"}
+                {"ca", "B2R", "Waverley"},
+                {"tr", "09100", "Köprülü Mah."}
         };
     }
 
     @Test
     public void requestZipCodeExpectHttp200(){
         given().
+                spec(requestSpec).
                 log().all().
         when().
-            get("https://zippopotam.us/us/90210").
+            get("us/90210").
         then().
             log().body().
             assertThat().statusCode(200).
@@ -35,12 +49,13 @@ public class zipCodeTest {
     }
 //Test using dataprovider to test different zipcode values with only one test class
     @Test(dataProvider = "zipCodeandPlaces")
-    public void requestZipCodeExpectHttp200(String countryCode, String zipCode, String placeName){
+    public void requestMultipleZipCodes(String countryCode, String zipCode, String placeName){
         given().
+                spec(requestSpec).
                 pathParam("countryCode", countryCode).
                 pathParam("zipCode", zipCode).
         when().
-            get("https://zippopotam.us/{countryCode}/{zipCode}").
+            get("{countryCode}/{zipCode}").
         then().
             assertThat().
             body("places[0].'place name'", equalTo(placeName));
